@@ -1,0 +1,11 @@
+{
+  "name": "buzzer",
+  "author": "",
+  "pins": [
+    "SIG",
+    "NC",
+    "VCC",
+    "GND"
+  ],
+  "controls": []
+}

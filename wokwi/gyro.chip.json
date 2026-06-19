@@ -1,0 +1,15 @@
+{
+  "name": "gyro",
+  "author": "",
+  "pins": [
+    "VCC",
+    "GND",
+    "SCL",
+    "SDA",
+    "XDA",
+    "XCL",
+    "ADO",
+    "INT"
+  ],
+  "controls": []
+}

@@ -1,0 +1,16 @@
+{
+  "name": "reed-switch",
+  "author": "",
+  "pins": [
+    "VCC",
+    "GND",
+    "OUT"
+  ],
+  "controls": [
+    {
+      "id": "closed",
+      "label": "Magnet Present",
+      "type": "checkbox"
+    }
+  ]
+}
