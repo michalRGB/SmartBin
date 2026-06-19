@@ -1,0 +1,541 @@
+[
+    {
+        "id": "578295f7d4524e8b",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "7c7d30898f2734fb",
+        "type": "mqtt in",
+        "z": "578295f7d4524e8b",
+        "name": "",
+        "topic": "smartbin/bin01/telemetry",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "52b07d9776d2e190",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 280,
+        "wires": [
+            [
+                "7a1227e0bed33ec0"
+            ]
+        ]
+    },
+    {
+        "id": "7a1227e0bed33ec0",
+        "type": "json",
+        "z": "578295f7d4524e8b",
+        "name": "json",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 390,
+        "y": 280,
+        "wires": [
+            [
+                "f275d2a46d5003ce"
+            ]
+        ]
+    },
+    {
+        "id": "f275d2a46d5003ce",
+        "type": "switch",
+        "z": "578295f7d4524e8b",
+        "name": "Separar evento",
+        "property": "payload.event",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "lid_opening",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "safety_measurement",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 520,
+        "y": 520,
+        "wires": [
+            [
+                "6409462392b10739",
+                "82fcef932be4c027",
+                "59ef5fafcb035a7f",
+                "d5531b810fa4ef4d"
+            ],
+            [
+                "d97ffc17b9924dd3",
+                "517a8e858b785216",
+                "61ac695a7e901c95",
+                "72582aa5fdb436b9"
+            ]
+        ]
+    },
+    {
+        "id": "d97ffc17b9924dd3",
+        "type": "debug",
+        "z": "578295f7d4524e8b",
+        "name": "Debug Seguridad",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "dd076bcbd1642406",
+        "type": "influxdb out",
+        "z": "578295f7d4524e8b",
+        "influxdb": "c49e6460e78d647d",
+        "name": "InfluxDB llenado",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 1120,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "6409462392b10739",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "format filling",
+        "func": "msg.measurement = \"filling\";\n\nmsg.payload = {\n    bin_id: msg.payload.bin_id,\n    fill_percent: msg.payload.fill_percent,\n    fill_level: msg.payload.fill_level,\n    open_count: msg.payload.open_count,\n    distance_cm: msg.payload.distance_cm\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 240,
+        "wires": [
+            [
+                "dd076bcbd1642406"
+            ]
+        ]
+    },
+    {
+        "id": "517a8e858b785216",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "format safety",
+        "func": "msg.measurement = \"safety\";\n\nmsg.payload = {\n    bin_id: msg.payload.bin_id,\n    temperature: msg.payload.temperature,\n    humidity: msg.payload.humidity,\n    orientation: msg.payload.orientation,\n    overturned: msg.payload.overturned,\n    status: msg.payload.status\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 620,
+        "wires": [
+            [
+                "1e0fdc0825ef5736"
+            ]
+        ]
+    },
+    {
+        "id": "1e0fdc0825ef5736",
+        "type": "influxdb out",
+        "z": "578295f7d4524e8b",
+        "influxdb": "c49e6460e78d647d",
+        "name": "InfluxDB seguridad",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 1070,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "d5531b810fa4ef4d",
+        "type": "debug",
+        "z": "578295f7d4524e8b",
+        "name": "Debug llenado",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1120,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "61ac695a7e901c95",
+        "type": "switch",
+        "z": "578295f7d4524e8b",
+        "name": "detectar alerta",
+        "property": "payload.status",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "NORMAL",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 840,
+        "y": 520,
+        "wires": [
+            [
+                "8a31126390200105"
+            ]
+        ]
+    },
+    {
+        "id": "8a31126390200105",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "Alerta seguridad",
+        "func": "msg.payload = {\n    chatId: 1016684216,\n    type: \"message\",\n    content:\n        \"⚠️ ALERTA SMARTBIN\\n\\n\" +\n        \"Contenedor: \" + msg.payload.bin_id + \"\\n\" +\n        \"Estado: \" + msg.payload.status + \"\\n\" +\n        \"Temperatura: \" + msg.payload.temperature + \" °C\\n\" +\n        \"Orientación: \" + msg.payload.orientation\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "82fcef932be4c027",
+        "type": "switch",
+        "z": "578295f7d4524e8b",
+        "name": "papelera llena",
+        "property": "payload.fill_level",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Level 4 - Urgent Collection",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 840,
+        "y": 460,
+        "wires": [
+            [
+                "b1cbe64efe3975b8"
+            ]
+        ]
+    },
+    {
+        "id": "b1cbe64efe3975b8",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "Alerta recogida",
+        "func": "msg.payload = {\n    chatId: 1016684216,\n    type: \"message\",\n    content:\n        \"🗑️ RECOGIDA NECESARIA\\n\\n\" +\n        \"Contenedor: \" + msg.payload.bin_id + \"\\n\" +\n        \"Nivel de llenado: \" + msg.payload.fill_percent + \"%\\n\" +\n        \"Estado: \" + msg.payload.fill_level + \"\\n\" +\n        \"Aperturas: \" + msg.payload.open_count\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "72582aa5fdb436b9",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "guardar safety actual",
+        "func": "flow.set(\"lastSafety\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a88dd91784249ff2",
+        "type": "telegram receiver",
+        "z": "578295f7d4524e8b",
+        "name": "",
+        "bot": "2d2d5a782cad76b8",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "hasinput": false,
+        "inputs": 0,
+        "handleallupdates": false,
+        "handleprocessupdates": false,
+        "x": 110,
+        "y": 820,
+        "wires": [
+            [
+                "eda0f698103b55ac"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "eda0f698103b55ac",
+        "type": "switch",
+        "z": "578295f7d4524e8b",
+        "name": "Filtrar comando",
+        "property": "payload.content",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "/estado",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/llenado",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/temperatura",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/humedad",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 380,
+        "y": 820,
+        "wires": [
+            [
+                "1f6db5dcf506fb86"
+            ],
+            [
+                "4ac378f86fa67ccd"
+            ],
+            [
+                "6d6843a3a409ed92"
+            ],
+            [
+                "5fc21d973add4f58"
+            ]
+        ]
+    },
+    {
+        "id": "59ef5fafcb035a7f",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "guardar filling actual",
+        "func": "flow.set(\"lastFilling\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1f6db5dcf506fb86",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "estado",
+        "func": "let safety = flow.get(\"lastSafety\") || {};\nlet filling = flow.get(\"lastFilling\") || {};\n\nmsg.payload = {\n    chatId: msg.payload.chatId,\n    type: \"message\",\n    content:\n        \"📊 ESTADO SMARTBIN\\n\\n\" +\n        \"Contenedor: \" + (safety.bin_id || filling.bin_id || \"N/A\") + \"\\n\" +\n        \"Estado: \" + (safety.status || \"N/A\") + \"\\n\" +\n        \"Temperatura: \" + (safety.temperature || \"N/A\") + \" °C\\n\" +\n        \"Humedad: \" + (safety.humidity || \"N/A\") + \" %\\n\" +\n        \"Llenado: \" + (filling.fill_percent || \"N/A\") + \" %\\n\" +\n        \"Nivel: \" + (filling.fill_level || \"N/A\") + \"\\n\" +\n        \"Aperturas: \" + (filling.open_count || \"N/A\")\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4ac378f86fa67ccd",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "llenado",
+        "func": "let filling = flow.get(\"lastFilling\") || {};\n\nmsg.payload = {\n    chatId: msg.payload.chatId,\n    type: \"message\",\n    content:\n        \"🗑️ LLENADO SMARTBIN\\n\\n\" +\n        \"Llenado: \" + (filling.fill_percent || \"N/A\") + \" %\\n\" +\n        \"Nivel: \" + (filling.fill_level || \"N/A\") + \"\\n\" +\n        \"Aperturas: \" + (filling.open_count || \"N/A\")\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6d6843a3a409ed92",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "temperatura",
+        "func": "let safety = flow.get(\"lastSafety\") || {};\n\nmsg.payload = {\n    chatId: msg.payload.chatId,\n    type: \"message\",\n    content:\n        \"🌡️ TEMPERATURA SMARTBIN\\n\\n\" +\n        \"Temperatura actual: \" + (safety.temperature || \"N/A\") + \" °C\"\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5fc21d973add4f58",
+        "type": "function",
+        "z": "578295f7d4524e8b",
+        "name": "humedad",
+        "func": "let safety = flow.get(\"lastSafety\") || {};\n\nmsg.payload = {\n    chatId: msg.payload.chatId,\n    type: \"message\",\n    content:\n        \"💧 HUMEDAD SMARTBIN\\n\\n\" +\n        \"Humedad actual: \" + (safety.humidity || \"N/A\") + \" %\"\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "52b07d9776d2e190",
+        "type": "mqtt-broker",
+        "name": "smartbin",
+        "broker": "test.mosquitto.org",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "5",
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "smartbin/bin01/telemetry",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "c49e6460e78d647d",
+        "type": "influxdb",
+        "hostname": "influxdb",
+        "port": 8086,
+        "protocol": "http",
+        "database": "smartbin",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "1.x",
+        "url": "http://localhost:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "2d2d5a782cad76b8",
+        "type": "telegram bot",
+        "botname": "smartbin bot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": 300,
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": 6667,
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbothost": "0.0.0.0",
+        "localbotport": 8443,
+        "publicbotport": 8443,
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "1e63c44805774fc7",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-influxdb": "0.7.0",
+            "node-red-contrib-telegrambot": "17.4.13"
+        }
+    }
+]
